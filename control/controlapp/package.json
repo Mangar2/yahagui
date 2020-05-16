@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
+    "buildProd": "ng build --prod --base-href /angular/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -18,7 +19,9 @@
     "@angular/forms": "~8.2.14",
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
+    "@angular/pwa": "^0.901.6",
     "@angular/router": "~8.2.14",
+    "@angular/service-worker": "~8.2.14",
     "rxjs": "~6.4.0",
     "tslib": "^1.11.2",
     "zone.js": "~0.9.1"

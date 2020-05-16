@@ -17,6 +17,8 @@ import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceHistoryComponent } from './device-history/device-history.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { DeviceChartComponent } from './device-chart/device-chart.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,8 @@ import { DeviceChartComponent } from './device-chart/device-chart.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [],
   bootstrap: [AppComponent]
