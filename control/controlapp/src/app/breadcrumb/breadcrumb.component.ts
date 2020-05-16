@@ -28,7 +28,7 @@ export class BreadcrumbComponent implements OnInit {
                 topic = ''
             }
             const topicChunks = topic.split('|')
-            this.breadcrumbList = [ { name: 'home', link: '/'} ]
+            this.breadcrumbList = [ { name: 'Home', link: '/'} ]
             let curLink = ''
             let spacer = ''
             for (let name of topicChunks) {
