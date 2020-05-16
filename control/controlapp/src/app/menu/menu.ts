@@ -15,7 +15,7 @@ import { DeviceTree } from '../device/devicetree'
   * @param name display name of the menu entry
   * @param link link to the element
   */
- class MenuEntry {
+ export class MenuEntry {
      _name: string
      _link: string
      constructor(name, link) {
@@ -39,7 +39,7 @@ import { DeviceTree } from '../device/devicetree'
   * Structure of a predefined menu
   */
  interface IPredefinedMenu {
-
+    submenuList: { [key:string]: IPredefinedEntry[] }
  }
 
  /**
@@ -50,27 +50,42 @@ import { DeviceTree } from '../device/devicetree'
   */
  export class Menu {
     menu: MenuEntry[] = []
-    constructor(baseTopic: string, deviceTree: DeviceTree, predefinedMenu: Object) {
-        let topicChunks: string[] = baseTopic.split('|')
-        topicChunks = this.reduceTopicUntilPopulatedNodeFound(topicChunks, deviceTree)
+    topicChunks: string[]
+    constructor(baseTopic: string, deviceTree: DeviceTree, predefinedMenu: IPredefinedMenu) {
+        this.topicChunks = baseTopic.split('|')
+        while (this.topicChunks[0] === '') {
+            this.topicChunks.shift()
+        }
+        this.topicChunks = this.reduceTopicUntilPopulatedNodeFound(deviceTree)
+        this.createMenu(deviceTree, predefinedMenu)
     }
+
+    /**
+     * List of menu entries
+     * @typedef
+     */
+    get menueEntries ():MenuEntry[] { return this.menu }
+
+    /**
+     * link to the base
+     */
+    get baseTopic (): string { return this.topicChunks.join('|')}
 
     /**
      * Adds an entry to the menu
      * @param name display name of the menu entry
-     * @param topicChunks elements of the topic the menu entry links to
+     * @param entryChunks elements of the topic the menu entry links to
      */
-    private addEntry(name, topicChunks) {
-        const link = topicChunks.join('|')
+    private addEntry(name, entryChunks) {
+        const link = entryChunks.join('|')
         this.menu.push(new MenuEntry(name, link))
     }
 
     /**
      * Adds a link to the parent directory, if this is not the root directory
-     * @param topicChunks menu topic separated in chunks
      */
-    private addBackLink(topicChunks: string[]) {
-        const back = [...topicChunks]
+    private addBackLink() {
+        const back = [...this.topicChunks]
         if (back[0] !== '' && back.length >= 1) {
             back.pop()
             const name = '<'
@@ -80,10 +95,9 @@ import { DeviceTree } from '../device/devicetree'
 
     /**
      * Adds a link to the current page
-     * @param topicChunks menu topic separated in chunks
      */
-    private addCurrentLink(topicChunks: string[]) {
-        const current = [...topicChunks]
+    private addCurrentLink() {
+        const current = [...this.topicChunks]
         if (current[0] !== '' && current.length > 0) {
             const name = current[current.length - 1]
             this.addEntry(name, current)
@@ -92,12 +106,11 @@ import { DeviceTree } from '../device/devicetree'
 
     /**
      * Reduces a link by removing the later secions until the device tree finds a matching node
-     * @param topicChunks menu topic separated in chunks
      * @param deviceTree tree of available devices
      * @returns reduces list of topic chunks
      */
-    private reduceTopicUntilPopulatedNodeFound(topicChunks: string[], deviceTree: DeviceTree): string[] {
-        const current: string[] = [...topicChunks]
+    private reduceTopicUntilPopulatedNodeFound(deviceTree: DeviceTree): string[] {
+        const current: string[] = [...this.topicChunks]
         let reducedTopic: string = current.join('|')
         while (!deviceTree.getNodeByTopic(reducedTopic) && reducedTopic !== "") {
             current.pop()
@@ -108,34 +121,49 @@ import { DeviceTree } from '../device/devicetree'
 
     /**
      * Gets a menu taken form the storage tree
-     * @param topicChunks menu topic separated in chunks
      * @param deviceTree tree of available devices
-     * @returns list of menu topics
      */
-    private createMenuFromDeviceTree(topicChunks: string[], deviceTree: DeviceTree): string[] {
-        const topic = topicChunks.join('|')
-        const menu = deviceTree.getTopicMenu(topic)
-        return menu
+    private addMenuEntriesFromDeviceTree(deviceTree: DeviceTree) {
+        const currentTopic: string = this.topicChunks.join('|')
+        const menu = deviceTree.getTopicMenu(currentTopic)
+        for (const entry of menu) {
+            const name = entry.name
+            this.addEntry(name, [...this.topicChunks, name])
+        }
+    }
+
+    /**
+     * Adds menu entries from a predefined menue template
+     * @param menuTemplate template to use for the menu
+     */
+    private addMenuEntriesFromMenuTemplate(menuTemplate:IPredefinedEntry[]) {
+        for (const menuEntry of menuTemplate) {
+            const { name, link } = menuEntry
+            if (link !== undefined) {
+                const linkChunks: string[] = link.split('/')
+                this.addEntry(name, [...this.topicChunks, ...linkChunks])
+            } else {
+                this.addEntry(name, [...this.topicChunks, name])
+            }
+        }
     }
 
     /**
      * Creates the menu for the current topic
-     * @param topicChunks menu topic separated in chunks
+     * @param deviceTree tree of available devices
+     * @param predefinedMenu predefined menue structure
      */
-    createMenu(topicChunks: string[]) {
-        this.baseTopic = topicChunks.join['|']
-        let menuTemplate = predefinedMenu[this.baseTopic]
+    private createMenu(deviceTree: DeviceTree, predefinedMenu: IPredefinedMenu) {
+        const baseTopic: string = this.topicChunks.join('/')
+        this.addBackLink()
+        this.addCurrentLink()
+
+        let menuTemplate:IPredefinedEntry[] = predefinedMenu[baseTopic]
         if (menuTemplate === undefined) {
-            menuTemplate = this.createMenuFromDeviceTree(this.baseTopic)
-        }
-        this.menu = []
-        this.addBackLinkToMenu()
-        this.addCurrentLinkToMenu()
-        for (let menuEntry of menuTemplate) {
-            const name = menuEntry.name
-            const codedLink = this.baseTopic === '' ? '' : this.baseTopic + '|'
-            const link = menuEntry.link !== undefined ? codedLink + menuEntry.link.split('/').join('|') : codedLink + name
-            this.menu.push({ name, link })
+            this.addMenuEntriesFromDeviceTree(deviceTree)
+        } else {
+            this.addMenuEntriesFromMenuTemplate(menuTemplate)
         }
     }
+
 }

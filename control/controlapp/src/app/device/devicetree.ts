@@ -105,7 +105,7 @@ export class DeviceTree {
      * @param topic topic to select the child
      * @returns a list of topic chunks of the childs
      */
-    public getTopicMenu(topic: string): string[]
+    public getTopicMenu(topic: string)
     {
         const node = this.getNodeByTopic(topic)
         const result = []

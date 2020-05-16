@@ -16,7 +16,7 @@ export const menu = {
         { name: 'hallway' },
         { name: 'kitchen' }
     ],
-    'ground|livingroom': [
+    'ground/livingroom': [
         { name: 'ficus', link: 'main/ficus' },
         { name: 'motion', link: 'main/motion sensor' }
     ],
