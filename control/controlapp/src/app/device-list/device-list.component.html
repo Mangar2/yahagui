@@ -11,7 +11,7 @@
             <div class = "row">
                 <div class="card justify-content-between card-adapt" *ngFor="let device of deviceList.devices">
                     <a class="card-clickable flex-fill" (click)="onClick(device)">
-                        <img class="card-img" width="64" 
+                        <img class="card-img ml-1 mt-1 mb-1" width="64" 
                             *ngIf="device !== undefined && device.value !== undefined && device.pictures !== undefined && device.pictures['on']" 
                             alt="bild" 
                             [src]="device.pictures[device.value] ? device.pictures[device.value] : device.pictures['on']" 
