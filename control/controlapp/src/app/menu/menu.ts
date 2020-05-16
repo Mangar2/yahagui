@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2020 Volker Böhm
  */
 
+import { IStorageNode } from '../device/interfaces'
 import { DeviceTree } from '../device/devicetree'
 
  /**
@@ -111,10 +112,8 @@ import { DeviceTree } from '../device/devicetree'
      */
     private reduceTopicUntilPopulatedNodeFound(deviceTree: DeviceTree): string[] {
         const current: string[] = [...this.topicChunks]
-        let reducedTopic: string = current.join('|')
-        while (!deviceTree.getNodeByTopic(reducedTopic) && reducedTopic !== "") {
+        while (!deviceTree.getNodeByTopicChunks(current) && current.length !== 0) {
             current.pop()
-            reducedTopic = current.join('|')
         }
         return current
     }
@@ -124,11 +123,9 @@ import { DeviceTree } from '../device/devicetree'
      * @param deviceTree tree of available devices
      */
     private addMenuEntriesFromDeviceTree(deviceTree: DeviceTree) {
-        const currentTopic: string = this.topicChunks.join('|')
-        const menu = deviceTree.getTopicMenu(currentTopic)
-        for (const entry of menu) {
-            const name = entry.name
-            this.addEntry(name, [...this.topicChunks, name])
+        const topicChilds: string[] = deviceTree.getTopicChildNames(this.topicChunks)
+        for (const childName of topicChilds) {
+            this.addEntry(childName, [...this.topicChunks, childName])
         }
     }
 

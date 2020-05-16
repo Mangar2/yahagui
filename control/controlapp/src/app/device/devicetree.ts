@@ -85,11 +85,10 @@ export class DeviceTree {
 
     /**
      * Gets a node by topic
-     * @param topic node topic
+     * @param topicChunks node topic chunks (path to the node)
      * @returns node found 
      */
-    public getNodeByTopic(topic: string): IStorageNode {
-        const topicChunks = topic.split('|')
+    public getNodeByTopicChunks(topicChunks: string[]): IStorageNode {
         let node = this.tree
         for (const topicChunk of topicChunks) {
             node = node.childs[topicChunk]
@@ -103,17 +102,17 @@ export class DeviceTree {
     /**
      * Gets a list of topic chunks of the childs
      * @param topic topic to select the child
-     * @returns a list of topic chunks of the childs
+     * @returns a list child names
      */
-    public getTopicMenu(topic: string)
+    public getTopicChildNames(topicChunks: string[]): string[]
     {
-        const node = this.getNodeByTopic(topic)
-        const result = []
+        const node: IStorageNode = this.getNodeByTopicChunks(topicChunks)
+        const result: string[] = []
         if (node !== undefined) {
             const childs = node.childs
             for (const child in childs) {
                 if (!actions.includes(child) && !child.startsWith('unknown')) {
-                    result.push({ name: child })
+                    result.push(child)
                 }
             }
         }
