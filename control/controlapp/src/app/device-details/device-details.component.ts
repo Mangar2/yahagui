@@ -32,7 +32,7 @@ export class DeviceDetailsComponent implements OnInit {
     _deviceTopic: string = ''
     _device: DeviceInfo
     _subscriptionCollect: Subscription = new Subscription()
-    _supportsSetValue: boolean
+    supportsSetValue: boolean
     _pendingRequest: boolean = false
     detailForm = new FormGroup({
         value: new FormControl('')
@@ -62,7 +62,7 @@ export class DeviceDetailsComponent implements OnInit {
         const node = nodes[0]
         if (node !== undefined) {
             this.deviceSubject.update(node)
-            this._supportsSetValue = this.deviceSubject.device.supportsSetValue()
+            this.supportsSetValue = this.deviceSubject.device.supportsSetValue()
         }
     }
 
