@@ -88,8 +88,8 @@ export class DeviceTree {
      * @param topic node topic
      * @returns node found 
      */
-    private getNodeByTopic(topic: string): IStorageNode {
-        const topicChunks = topic.split('/')
+    public getNodeByTopic(topic: string): IStorageNode {
+        const topicChunks = topic.split('|')
         let node = this.tree
         for (const topicChunk of topicChunks) {
             node = node.childs[topicChunk]
@@ -151,7 +151,7 @@ export class DeviceTree {
         
         for (const childChunk in node.childs) {
             const childNode = node.childs[childChunk]
-            const childTopic = topic + '/' + childChunk
+            const childTopic = topic === "" ? childChunk : topic + '/' + childChunk
             const childResult = this.filterNodesRec(childTopic, childNode, properties)
             result = [...result, ...childResult]
         }
@@ -252,7 +252,6 @@ export class DeviceTree {
      * @param payload data read from server
      */
     public replaceManyNodes(payload: IPayload) {
-        console.log('replaceManyNodes enter')
         if (payload) {
             for (let topic in payload) {
                 if (typeof(topic) === 'string' && topic !== '') {
@@ -261,7 +260,6 @@ export class DeviceTree {
                 }
             }
         }
-        console.log('replaceManyNodes exit')
     }
 }
 

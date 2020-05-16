@@ -11,7 +11,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { menu } from './location-menu.structure.js';
+import { menu as predefinedMenu } from './location-menu.structure.js';
 import { DeviceTree } from '../device/devicetree'
 
 
@@ -21,37 +21,18 @@ import { DeviceTree } from '../device/devicetree'
     styleUrls: ['./location-menu.component.css']
 })
 export class LocationMenuComponent implements OnInit {
-    device
     menu = []
-    baseLink = ''
-    topicFilter
-    active = ''
+    baseTopic: string = ''
+    activeTopic: string = ''
 
-    constructor(private route: ActivatedRoute, private deviceStorage: DeviceTree) { 
-    }
-
-    /**
-     * searches the right menu index
-     * @returns index to the right menu
-     */
-    private getBaseLink(): string {
-        let baseLinkArray = this.topicFilter.split('|')
-        let menuIndex = ''
-        while (menuIndex === '' && baseLinkArray.length !== 0) {
-            const baseLink = baseLinkArray.join('/')
-            if (menu[baseLink] !== undefined) {
-                menuIndex = baseLink
-            }
-            baseLinkArray.pop()
-        }
-        return menuIndex
+    constructor(private route: ActivatedRoute, private deviceTree: DeviceTree) { 
     }
 
     /**
      * Adds a link to the parent directory, if this is not the root directory
      */
     private addBackLinkToMenu() {
-        const back = this.baseLink.split('/')
+        const back = this.baseTopic.split('|')
         if (back[0] !== '' && back.length >= 1) {
             back.pop()
             const name = '<'
@@ -64,7 +45,7 @@ export class LocationMenuComponent implements OnInit {
      * Adds a link to the current page
      */
     private addCurrentLinkToMenu() {
-        const current = this.baseLink.split('/')
+        const current = this.baseTopic.split('|')
         if (current[0] !== '' && current.length > 0) {
             const link = current.join('|')
             const name = current[current.length - 1]
@@ -73,32 +54,45 @@ export class LocationMenuComponent implements OnInit {
     }
 
     /**
+     * Reduces a link by removing the later secions until the device tree finds a matching node
+     * @param topic current topic
+     * @returns topic 
+     */
+    private reduceTopicUntilPopulatedNodeFound(topic: string): string {
+        const topicChunks = topic.split('|')
+        let reducedTopic = topic
+        while (!this.deviceTree.getNodeByTopic(reducedTopic) && reducedTopic !== "") {
+            topicChunks.pop()
+            reducedTopic = topicChunks.join('|')
+        }
+        return reducedTopic
+    }
+
+    /**
      * Gets a menu taken form the storage tree
      */
-    private getMenuFromStorage() {
-        let menu = this.deviceStorage.getTopicMenu(this.baseLink)
-        const topicChunks = this.topicFilter.split('|')
-        while (menu.length === 0 && topicChunks.length > 0) {
-            topicChunks.pop()
-            this.baseLink = topicChunks.join('/')
-            menu = this.deviceStorage.getTopicMenu(this.baseLink)
-        }
+    private createMenuFromDeviceTree(topic: string): string[] {
+        const menu = this.deviceTree.getTopicMenu(topic)
         return menu
     }
 
     /**
-     * Creates the menu for the current link
+     * Creates the menu for the current topic
+     * @param topic base topic for the menu
      */
-    createMenu() {
-        this.baseLink = this.getBaseLink()
-        this.baseLink = this.topicFilter.split('|').join('/')
-        const menuTemplate = menu[this.baseLink] ? menu[this.baseLink] : this.getMenuFromStorage()
+    createMenu(topic: string) {
+        this.baseTopic = topic
+        let menuTemplate = predefinedMenu[this.baseTopic]
+        if (menuTemplate === undefined) {
+            this.baseTopic = this.reduceTopicUntilPopulatedNodeFound(this.baseTopic)
+            menuTemplate = this.createMenuFromDeviceTree(this.baseTopic)
+        }
         this.menu = []
         this.addBackLinkToMenu()
         this.addCurrentLinkToMenu()
         for (let menuEntry of menuTemplate) {
             const name = menuEntry.name
-            const codedLink = this.baseLink === '' ? '' : this.baseLink.split('/').join('|') + '|'
+            const codedLink = this.baseTopic === '' ? '' : this.baseTopic + '|'
             const link = menuEntry.link !== undefined ? codedLink + menuEntry.link.split('/').join('|') : codedLink + name
             this.menu.push({ name, link })
         }
@@ -106,12 +100,11 @@ export class LocationMenuComponent implements OnInit {
     
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
-            this.topicFilter = params.get('topicFilter');
-            this.active = this.topicFilter ? this.topicFilter : ''
-            if (this.topicFilter === null) {
-                this.topicFilter = ''
+            this.activeTopic = params.get('topicFilter');
+            if (!this.activeTopic) {
+                this.activeTopic = ""
             }
-            this.createMenu()
+            this.createMenu(this.activeTopic)
         })
     }
 

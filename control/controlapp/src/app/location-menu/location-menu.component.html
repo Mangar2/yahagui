@@ -2,9 +2,9 @@
 <ul class="list-group">
     <a class='list-group-item list-group-item-action' 
         *ngFor="let item of menu" 
-        [class.font-weight-bold]="item.link === baseLink"
-        [class.pl-3]="item.link !== baseLink"
-        [class.active]="active === item.link"
+        [class.font-weight-bold]="item.link === baseTopic"
+        [class.pl-3]="item.link !== baseTopic"
+        [class.active]="activeTopic === item.link"
         [routerLink]="['/' + item.link]" >
         {{item.name}}
     </a>

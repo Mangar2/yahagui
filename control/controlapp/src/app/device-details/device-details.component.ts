@@ -21,21 +21,27 @@ import { DeviceTree } from '../device/devicetree'
 import { ApiService } from '../service/api.service';
 import { devices } from '../devices';
 
+const REFRESH_RATE_IN_MILLISECONDS = 2 * 1000
+
 @Component({
     selector: 'app-device-details',
     templateUrl: './device-details.component.html',
     styleUrls: ['./device-details.component.css']
 })
-
 export class DeviceDetailsComponent implements OnInit {
     _deviceTopic: string = ''
     _device: DeviceInfo
     _subscriptionCollect: Subscription = new Subscription()
     _supportsSetValue: boolean
     _pendingRequest: boolean = false
-    _detailForm = new FormGroup({
+    detailForm = new FormGroup({
         value: new FormControl('')
     })
+
+    /**
+     * Gets the information of the device
+     */
+    get device (): DeviceInfo { return this._device }
 
     /**
      * 
@@ -93,7 +99,7 @@ export class DeviceDetailsComponent implements OnInit {
      * Called when updating a manually changed value
      */
     onUpdate(): void {
-        const valueControl = this._detailForm.get('value')
+        const valueControl = this.detailForm.get('value')
         if (valueControl.touched) {
             this.deviceApi.publish(this.deviceSubject.device.topic, valueControl.value).subscribe(resp => {
                 console.log(resp)
@@ -133,7 +139,7 @@ export class DeviceDetailsComponent implements OnInit {
             this.updateDevice()
         });
         this._subscribeToReceiveDeviceDataChanges()
-        this._pollDeviceDetailDataFromServer(100)
+        this._pollDeviceDetailDataFromServer(REFRESH_RATE_IN_MILLISECONDS)
     }
 
     /**

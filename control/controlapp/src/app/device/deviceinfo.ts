@@ -22,7 +22,7 @@ import { IDevice, IReason, IHistory } from './interfaces';
 })
 export class DeviceInfo implements IDevice {
     name: string
-    topic: string
+    _topic: string
     value: string
     reason: IReason[]
     history: IHistory[]
@@ -31,6 +31,22 @@ export class DeviceInfo implements IDevice {
     pictures: any
 
     constructor() {
+    }
+
+
+    /**
+     * Topic of the device
+     */
+    get topic (): string {
+        return this._topic
+    }
+
+    set topic (topic: string) {
+        if (topic === '') {
+            this._topic = ''
+        } else {
+            this._topic = topic.split('|').join('/')
+        }
     }
 
     /**

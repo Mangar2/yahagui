@@ -16,8 +16,9 @@ import { timer, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ApiService } from '../service/api.service';
 
-import { DeviceList } from '../device/devicelist';
+import { DeviceList } from '../device/devicelist'
 import { DeviceTree } from '../device/devicetree'
+import { DeviceInfo } from '../device/deviceinfo'
 
 @Component({
     selector: 'app-device-list',
@@ -26,7 +27,7 @@ import { DeviceTree } from '../device/devicetree'
 })
 export class DeviceListComponent {
     title = 'yaha Smart Home'
-    devices = new DeviceList()
+    deviceList = new DeviceList()
     topicFilter: string
     subscription: Subscription = new Subscription()
     _pendingRequest: boolean = false
@@ -66,7 +67,7 @@ export class DeviceListComponent {
      * Handles a click on a device
      * @param device device object clicked
      */
-    onClick (device): void {
+    onClick (device: DeviceInfo): void {
         const value = device.value === 'on' ? 'off' : 'on'
         if (device.actions !== undefined && device.actions.includes(value)) {
             this.subscription.add(this.deviceApi.publish(device.topic, value).subscribe(resp => {
@@ -94,7 +95,7 @@ export class DeviceListComponent {
                 this.deviceStorage.replaceManyNodes(payload)
                 const nodes = this.deviceStorage.getAllMatchingNodes(topic)
                 if (nodes[0] !== undefined) {
-                    this.devices.updateDevice(deviceTopic, nodes[0])   
+                    this.deviceList.updateDevice(deviceTopic, nodes[0])   
                 }
                 this._pendingRequest = false
             })
@@ -127,7 +128,7 @@ export class DeviceListComponent {
         for (const node of nodes) {
             devices.replaceDevice(node.topic, node)
         }
-        this.devices = devices
+        this.deviceList = devices
     }
 
     /**
