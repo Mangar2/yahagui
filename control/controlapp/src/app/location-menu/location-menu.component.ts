@@ -24,6 +24,7 @@ import { ApiService } from '../service/api.service';
 export class LocationMenuComponent implements OnInit {
     menu
     activeTopic: string = ''
+    predefinedMenue: IPredefinedMenu
 
     constructor(private route: ActivatedRoute, private apiService: ApiService,  private deviceTree: DeviceTree) { 
     }
@@ -42,9 +43,14 @@ export class LocationMenuComponent implements OnInit {
             if (!this.activeTopic) {
                 this.activeTopic = ""
             }
-            this.apiService.getMenueConfiguration().subscribe(predefinedMenu => {
-                this.createMenu(this.activeTopic, predefinedMenu)
-            })
+            if (this.predefinedMenue !== undefined) {
+                this.createMenu(this.activeTopic, this.predefinedMenue)
+            } else {
+                this.apiService.getMenueConfiguration().subscribe(predefinedMenu => {
+                    this.predefinedMenue = predefinedMenu
+                    this.createMenu(this.activeTopic, predefinedMenu)
+                })
+            }
         })
     }
 
