@@ -1,5 +1,5 @@
 <div class="table-responsive">
-    <span class="history-label"><h2>History</h2></span>
+    <span class="history-label"><h3>History</h3></span>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -8,6 +8,10 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td>{{deviceSubject.device.value}}</td>
+                <td>{{deviceSubject.device.reason | reasonToText}}</td>
+            </tr>
             <tr *ngFor="let entry of deviceSubject.device.history | slice:0:100">
                 <td>{{entry.value}}</td>
                 <td>{{entry.reason | reasonToText }}</td>

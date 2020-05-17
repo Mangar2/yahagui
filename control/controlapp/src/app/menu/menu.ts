@@ -39,7 +39,7 @@ import { DeviceTree } from '../device/devicetree'
  /**
   * Structure of a predefined menu
   */
- interface IPredefinedMenu {
+ export interface IPredefinedMenu {
     submenuList: { [key:string]: IPredefinedEntry[] }
  }
 

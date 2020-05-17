@@ -11,9 +11,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { menu as predefinedMenu } from './location-menu.structure.js';
 import { DeviceTree } from '../device/devicetree'
-import { Menu } from '../menu/menu'
+import { Menu, IPredefinedMenu } from '../menu/menu'
+import { ApiService } from '../service/api.service';
 
 
 @Component({
@@ -25,14 +25,14 @@ export class LocationMenuComponent implements OnInit {
     menu
     activeTopic: string = ''
 
-    constructor(private route: ActivatedRoute, private deviceTree: DeviceTree) { 
+    constructor(private route: ActivatedRoute, private apiService: ApiService,  private deviceTree: DeviceTree) { 
     }
 
     /**
      * Creates the menu for the current topic
      * @param topic base topic for the menu
      */
-    createMenu(topic: string) {
+    createMenu(topic: string, predefinedMenu: IPredefinedMenu) {
         this.menu = new Menu(topic, this.deviceTree, predefinedMenu)
     }
     
@@ -42,7 +42,9 @@ export class LocationMenuComponent implements OnInit {
             if (!this.activeTopic) {
                 this.activeTopic = ""
             }
-            this.createMenu(this.activeTopic)
+            this.apiService.getMenueConfiguration().subscribe(predefinedMenu => {
+                this.createMenu(this.activeTopic, predefinedMenu)
+            })
         })
     }
 

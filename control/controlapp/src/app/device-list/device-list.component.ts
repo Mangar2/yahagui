@@ -11,7 +11,7 @@
 
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { devices } from '../devices';
+import { devices } from '../configuration/devices';
 import { timer, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ApiService } from '../service/api.service';

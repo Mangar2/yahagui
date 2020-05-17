@@ -1,4 +1,4 @@
-import { pictures } from './pictures/pictures'
+import { pictures } from '../pictures/pictures'
 
 const deviceOnOff = {
     actions: ['on', 'off']

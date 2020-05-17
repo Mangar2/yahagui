@@ -19,7 +19,7 @@ import { DeviceInfo } from '../device/deviceinfo';
 import { DeviceTree } from '../device/devicetree'
 
 import { ApiService } from '../service/api.service';
-import { devices } from '../devices';
+import { devices } from '../configuration/devices';
 
 const REFRESH_RATE_IN_MILLISECONDS = 2 * 1000
 

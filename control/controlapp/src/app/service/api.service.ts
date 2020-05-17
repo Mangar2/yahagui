@@ -13,6 +13,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import { IPayload } from '../device/interfaces'
+import { IPredefinedMenu } from '../menu/menu'
 
 /**
  * Result structure of a publish command
@@ -55,6 +56,15 @@ export class ApiService {
         }
         const observable: Observable<HttpResponse<DeviceInfo>>  = 
             this.http.post<DeviceInfo>("angular/api/sensor.php", data, { observe: 'response' });
+        return observable
+    }
+
+    /**
+     * Reads a menu configuration from the server
+     */
+    getMenueConfiguration(): Observable<IPredefinedMenu> {
+        const location = "assets/configuration/menu.json"
+        const observable: Observable<IPredefinedMenu> = this.http.get<IPredefinedMenu>(location);
         return observable
     }
 
