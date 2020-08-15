@@ -18,7 +18,7 @@ $timestamp = (new DateTime())->format('c');
 $json_data = json_encode(
     array(
         'topic' => $topic, 
-        'reason' => array('message' => 'Request by browser', 'timestamp' => $timestamp),
+        'reason' => array(array('message' => 'Request by browser', 'timestamp' => $timestamp)),
         'value' => $value));
 
 $options = array(

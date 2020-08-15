@@ -82,7 +82,7 @@ export const devices: any = [
     {
         name: "Roller shutter south-east",
         topic: "ground/livingroom/zwave/shutter/southeast",
-        actions: ['up', 'down', 'stop'],
+        actions: ['on', 'off', 'stop'],
         properties: ['control'],
         pictures: pictures.roller
     },

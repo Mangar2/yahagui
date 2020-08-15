@@ -47,7 +47,7 @@ $opts = [
 ];
 
 $context = stream_context_create($opts);
-$linkName = "http://192.168.0.4:8183/sensor" . $topic;
+$linkName = "http://localhost:8183/sensor" . $topic;
 $response = file_get_contents($linkName, false, $context);
 echo $response;
 ?>
