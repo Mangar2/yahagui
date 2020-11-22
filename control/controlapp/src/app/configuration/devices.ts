@@ -4,8 +4,7 @@ export const devices: any = [
     {
         name: 'Main status',
         topic: '$SYS/presence',
-        value: 'on',
-        actions: ['on', 'off', 'sleeping'],
+        actions: ['awake', 'absent', 'sleeping'],
         properties: ['favorit', 'control'],
         pictures: pictures.house
     },
@@ -151,7 +150,7 @@ export const devices: any = [
     {
         name: "Smarthome server",
         topic: "ground/wardrobe/i2c/switch/server",
-        actions: ['shutdown', 'on', 'off'],
+        actions: ['on', 'shutdown', 'off'],
         properties: ['control', 'protect'],
         pictures: pictures.smarthomeServer
     },

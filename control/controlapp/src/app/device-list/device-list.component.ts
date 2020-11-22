@@ -68,17 +68,18 @@ export class DeviceListComponent {
      * @param device device object clicked
      */
     onClick (device: DeviceInfo): void {
-        const value = device.value === 'on' ? 'off' : 'on'
-        if (device.actions !== undefined && device.actions.includes(value)) {
-            this.subscription.add(this.deviceApi.publish(device.topic, value).subscribe(resp => {
-                const pollForUpdate = timer(500, 500).pipe(take(4))
-                this.subscription.add(pollForUpdate.subscribe(() => {
-                    if (!this._pendingRequest) {
-                        this.subscription.add(this.updateDeviceFromApi(device.topic, false))
-                    }
-                }))
-            }))
+        if (device.actions === undefined && device.actions.length <= 2) {
+            return
         }
+        const value = device.value === device.actions[0] ? device.actions[1] : device.actions[0]
+        this.subscription.add(this.deviceApi.publish(device.topic, value).subscribe(resp => {
+            const pollForUpdate = timer(500, 500).pipe(take(4))
+            this.subscription.add(pollForUpdate.subscribe(() => {
+                if (!this._pendingRequest) {
+                    this.subscription.add(this.updateDeviceFromApi(device.topic, false))
+                }
+            }))
+        }))
     }
 
      /**

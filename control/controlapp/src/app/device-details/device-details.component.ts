@@ -39,9 +39,11 @@ export class DeviceDetailsComponent implements OnInit {
     })
 
     /**
-     * Gets the information of the device
+     * Data structure describing the currently shown device
+     * @property {Object}
      */
     get device (): DeviceInfo { return this._device }
+    set device (device) { this._device = device }
 
     /**
      * 
@@ -126,7 +128,7 @@ export class DeviceDetailsComponent implements OnInit {
      */
     _subscribeToReceiveDeviceDataChanges(): void {
         this._subscriptionCollect.add(this.deviceSubject.subscribe((device) => {
-            this._device = device
+            this.device = device
         }))
     }
 

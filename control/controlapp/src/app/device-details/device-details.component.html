@@ -6,9 +6,9 @@
             <div class="row mt-md-3 mb-3">
                 <div class="col-sm-2 align-items-stretch">
                     <img class="detail-img"
-                        *ngIf="device.value !== undefined && device.pictures !== undefined && device.pictures['on']"
+                        *ngIf="device.picture !== undefined"
                         alt="bild"
-                        [src]="device.pictures[device.value] ? device.pictures[device.value] : device.pictures['on']" />
+                        [src]="device.picture" />
                 </div>
                 <div class="col-sm-10 align-items-stretch">
                     <span class="detail-headline">{{ device.name }}</span>

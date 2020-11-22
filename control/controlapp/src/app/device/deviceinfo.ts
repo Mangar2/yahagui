@@ -29,6 +29,11 @@ export class DeviceInfo implements IDevice {
     actions: string[]
     properties: string[]
     pictures: any
+    /**
+     * Current picture
+     * @property {Object}
+     */
+    picture: any
 
     constructor() {
     }
@@ -83,6 +88,12 @@ export class DeviceInfo implements IDevice {
             }
             if (!Array.isArray(this.properties)) {
                 this.properties = []
+            }
+            if (this.pictures !== undefined) {
+                this.picture = this.pictures[Object.keys(this.pictures)[0]]
+                if (this.value !== undefined && this.pictures[this.value] !== undefined) {
+                    this.picture = this.pictures[this.value]
+                }
             }
         }
     }

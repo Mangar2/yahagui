@@ -2,6 +2,7 @@
 
 $topic ='';
 $history = 'false';
+$reason = 'false';
 $levelAmount = 1;
 
 $postdata = file_get_contents("php://input");
@@ -19,6 +20,13 @@ if (empty($postdata)) {
                 ]
             ]);
             
+        }
+        if (property_exists($request, "reason")) {
+            $reason = filter_var($request->reason, FILTER_VALIDATE_BOOLEAN, [
+                'options' => [
+                    'default' => false
+                ]
+            ]);
         }
         if (property_exists($request, "levelAmount")) {
             $levelAmount = filter_var($request->levelAmount, FILTER_VALIDATE_INT, [
@@ -41,7 +49,9 @@ $topic = str_replace(' ', '%20', $topic);
 $opts = [
     "http" => [
         "method" => "GET",
-        "header" => "history: " . $history . "\r\n".
+        "header" => 
+            "history: " . $history . "\r\n".
+            "reason: " . $reason . "\r\n".
             "levelAmount: " . $levelAmount . "\r\n"
     ]
 ];
