@@ -71,11 +71,12 @@ export class DeviceDetailsComponent implements OnInit {
     /**
      * Read data from the server based on a topic
      * @param history true, to add the history
+     * @param reason true, if reason information will be added
      * @returns The subscription element for the http call.
      */
-    updateStorageFromApi(history: boolean) : Subscription {
+    updateStorageFromApi(history: boolean, reason: boolean) : Subscription {
         this._pendingRequest = true
-        return this.deviceApi.getDevices(this._deviceTopic, history).
+        return this.deviceApi.getDevices(this._deviceTopic, history, reason).
             subscribe(resp => {
                 const payload = resp.body.payload
                 this.deviceStorage.replaceManyNodes(payload)
@@ -118,7 +119,7 @@ export class DeviceDetailsComponent implements OnInit {
         this._subscriptionCollect.add(pollForUpdate.subscribe(() => {
             console.log("detail update");
             if (!this._pendingRequest) {
-                this._subscriptionCollect.add(this.updateStorageFromApi(true))
+                this._subscriptionCollect.add(this.updateStorageFromApi(true, true))
             }
         }))
     }

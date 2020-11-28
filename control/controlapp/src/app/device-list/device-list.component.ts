@@ -76,7 +76,7 @@ export class DeviceListComponent {
             const pollForUpdate = timer(500, 500).pipe(take(4))
             this.subscription.add(pollForUpdate.subscribe(() => {
                 if (!this._pendingRequest) {
-                    this.subscription.add(this.updateDeviceFromApi(device.topic, false))
+                    this.subscription.add(this.updateDeviceFromApi(device.topic, false, false))
                 }
             }))
         }))
@@ -85,11 +85,12 @@ export class DeviceListComponent {
      /**
      * Read data from the server based on a topic
      * @param deviceTopic topic to fetch data for
+     * @param reason true, if reason information will be added
      * @param history true, to add the history
      */
-    updateDeviceFromApi(deviceTopic: string, history: boolean): Subscription {
+    updateDeviceFromApi(deviceTopic: string, history: boolean, reason: boolean): Subscription {
         const topic = deviceTopic.split('|').join('/')
-        const httpRequestObservable = this.deviceApi.getDevices(topic, history)
+        const httpRequestObservable = this.deviceApi.getDevices(topic, history, reason)
         this._pendingRequest = true
         return httpRequestObservable.subscribe(resp => {
                 const payload = resp.body.payload
@@ -111,8 +112,8 @@ export class DeviceListComponent {
         const topicFilterLength = topicFilter === '' ? 0 : topicFilter.split('/').length
         switch (topicFilterLength) {
             case 0: result = ['favorit']; break;
-            case 1: result = ['favorit', 'control', 'security', 'level1']; break;
-            case 2:
+            case 1: result = ['favorit', 'security', 'level1']; break;
+            case 2: result = ['favorit', 'control', 'security', 'level2']; break;
             case 3: result = ['favorit', 'level1', 'level2', 'control', 'security', 'measured']; break;
             default: result = undefined
         }
@@ -138,7 +139,8 @@ export class DeviceListComponent {
      */
     readTree (): Subscription {
         this._pendingRequest = true
-        const httpRequestObservable = this.deviceApi.getDevices('', false, 7)
+        const topicFilter = this.topicFilter.split('|').join('/')
+        const httpRequestObservable = this.deviceApi.getDevices(topicFilter, false, false, 7)
         return httpRequestObservable.subscribe(resp => {
             const payload = resp.body.payload
             this.deviceStorage.replaceManyNodes(payload)

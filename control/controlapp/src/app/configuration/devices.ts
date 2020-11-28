@@ -39,21 +39,21 @@ export const devices: any = [
     { 
         name: 'Floor heating',
         topic: 'ground/wardrobe/fs20/switch/floor heating',
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.floorHeating
     },    
     { 
         name: 'Network switch',
         topic: 'ground/wardrobe/i2c/switch/network switch',
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.networkSwitch
     },    
     { 
         name: 'Security camera',
         topic: 'ground/livingroom/zwave/switch/camera',
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.securityCamera
     },    
@@ -74,7 +74,7 @@ export const devices: any = [
     {
         name: "Ceiling floodlight",
         topic: "ground/livingroom/zwave/switch/floodlight",
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.light
     },
@@ -82,14 +82,14 @@ export const devices: any = [
         name: "Roller shutter south-east",
         topic: "ground/livingroom/zwave/shutter/southeast",
         actions: ['on', 'off', 'stop'],
-        properties: ['control'],
+        properties: ['level1', 'control'],
         pictures: pictures.roller
     },
     {
         name: "Roller shutter south-west",
         topic: "ground/livingroom/zwave/shutter/southwest",
         actions: ['on', 'off', 'stop'],
-        properties: ['control'],
+        properties: ['level1', 'control'],
         pictures: pictures.roller
     },
     {
@@ -102,21 +102,21 @@ export const devices: any = [
     {
         name: "Multimedia amplifier",
         topic: "ground/livingroom/fs20/switch/amplifier",
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.amplifier
     },
     {
         name: "Apple TV",
         topic: "ground/livingroom/fs20/switch/appletv",
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.computer
     },
     {
         name: "Dishwasher",
         topic: "ground/kitchen/zwave/switch/dishwasher",
-        properties: ['control'],
+        properties: ['level2', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.dishwasher
     },
@@ -206,7 +206,7 @@ export const devices: any = [
     {
         name: "Laser printer",
         topic: "first/study/zwave/switch/laserprinter",
-        properties: ['control'],
+        properties: ['level1', 'control'],
         actions: ['on', 'off'],
         pictures: pictures.printer
     },

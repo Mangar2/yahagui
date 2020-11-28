@@ -2,26 +2,33 @@
 
 $topic ='';
 $history = 'false';
-$reason = 'true';
+$reason = 'false';
 $levelAmount = 1;
 
 $postdata = file_get_contents("php://input");
 
-if (!empty($postdata)) {
+if (empty($postdata)) {
     $request = json_decode($postdata);
     if (!empty($request)) {
         if (property_exists($request, "topic")) {
             $topic = filter_var($request->topic);
         }
         if (property_exists($request, "history")) {
-            $history =  $request->history == 'true' ? 'true' : 'false';
+            $history = filter_var($request->history, FILTER_VALIDATE_BOOLEAN, [
+                'options' => [
+                    'default' => false
+                ]
+            ]);
+            
         }
         if (property_exists($request, "reason")) {
-            $reason =  $request->reason == 'true' ? 'true' : 'false';
+            $reason = filter_var($request->reason, FILTER_VALIDATE_BOOLEAN, [
+                'options' => [
+                    'default' => false
+                ]
+            ]);
         }
         if (property_exists($request, "levelAmount")) {
-            $levelAmount = $request->levelAmount;
-            /*
             $levelAmount = filter_var($request->levelAmount, FILTER_VALIDATE_INT, [
                 'options' => [
                     'default' => 1,
@@ -29,7 +36,6 @@ if (!empty($postdata)) {
                     'max-range' => 10
                 ]
             ]);
-            */
         }
     }
 }
@@ -51,7 +57,7 @@ $opts = [
 ];
 
 $context = stream_context_create($opts);
-$linkName = "http://192.168.0.4:8203/sensor" . $topic;
+$linkName = "http://localhost:8183/sensor" . $topic;
 $response = file_get_contents($linkName, false, $context);
 echo $response;
 ?>

@@ -44,14 +44,16 @@ export class ApiService {
      * Gets device infos from the server
      * @param topic topic string to identify the device, leave empty to get all devices
      * @param history true, if history data will be added
+     * @param reason true, if reason information will be added
      * @param levelAmount amount of data level to retrieve
      */
-    getDevices(topic: string, history: boolean, levelAmount: number = 1): Observable<HttpResponse<DeviceInfo>> {
+    getDevices(topic: string, history: boolean, reason: boolean = true, levelAmount: number = 1): Observable<HttpResponse<DeviceInfo>> {
         // The app uses '|' instead of '/' to get around angular routing, the interface needs '/'
         topic = topic.split('|').join('/')
         const data = {
             topic,
             history: history ? "true" : "false",
+            reason: reason ? "true" : "false",
             levelAmount
         }
         const observable: Observable<HttpResponse<DeviceInfo>>  = 
