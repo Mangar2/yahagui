@@ -19,6 +19,7 @@ import { ApiService } from '../service/api.service';
 import { DeviceList } from '../device/devicelist'
 import { DeviceTree } from '../device/devicetree'
 import { DeviceInfo } from '../device/deviceinfo'
+import { IDevice, IPayload } from '../device/interfaces'
 
 @Component({
     selector: 'app-device-list',
@@ -44,7 +45,7 @@ export class DeviceListComponent {
         const pollForUpdate = timer(0, delayBetweenPollsInMilliseconds)
         this.subscription.add(pollForUpdate.subscribe(() => {
             if (!this._pendingRequest) {
-                this.readTree()
+                this.subscription.add(this.readTree())
             }
         }))
     }
@@ -61,6 +62,19 @@ export class DeviceListComponent {
             }
         });
         this._pollForAllDevicesWithoutHistory(2*1000)
+    }
+
+    /**
+     * Gets an array of devices currently shown on the page
+     * @returns array of devices
+     */
+    _getVisibleDevices() : IPayload {
+        const nodes : IPayload = []
+        for (const device of this.deviceList.devices) {
+            const { _topic, value } = device
+            nodes.push({ topic: _topic, value })
+        }
+        return nodes
     }
 
     /**
@@ -90,7 +104,7 @@ export class DeviceListComponent {
      */
     updateDeviceFromApi(deviceTopic: string, history: boolean, reason: boolean): Subscription {
         const topic = deviceTopic.split('|').join('/')
-        const httpRequestObservable = this.deviceApi.getDevices(topic, [], history, reason)
+        const httpRequestObservable = this.deviceApi.getDevices(topic, [], history, reason, 1)
         this._pendingRequest = true
         return httpRequestObservable.subscribe(resp => {
                 const payload = resp.body.payload
@@ -135,12 +149,14 @@ export class DeviceListComponent {
 
     /**
      * reads a full tree of all device information from a rest API and populates the UI from the result
+     * @param fullReload true, if the full tree should be aquired
      * @returns the subscription element for the http request reading the device tree
      */
-    readTree (): Subscription {
+    readTree (fullReload: boolean = false): Subscription {
         this._pendingRequest = true
+        const nodes = fullReload ? [] : this._getVisibleDevices()
         const topicFilter = this.topicFilter.split('|').join('/')
-        const httpRequestObservable = this.deviceApi.getDevices(topicFilter, [], false, false, 7)
+        const httpRequestObservable = this.deviceApi.getDevices(topicFilter, nodes, false, false, 7)
         return httpRequestObservable.subscribe(resp => {
             const payload = resp.body.payload
             this.deviceStorage.replaceManyNodes(payload)
