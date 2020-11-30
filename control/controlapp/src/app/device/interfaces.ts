@@ -49,6 +49,4 @@ export interface IStorageNode extends IDevice {
 /**
  * Payload read from server
  */
-export interface IPayload {
-    childs: { [key:string]: IDevice }
-}
+export type IPayload = IDevice[]

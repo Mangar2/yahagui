@@ -90,7 +90,7 @@ export class DeviceListComponent {
      */
     updateDeviceFromApi(deviceTopic: string, history: boolean, reason: boolean): Subscription {
         const topic = deviceTopic.split('|').join('/')
-        const httpRequestObservable = this.deviceApi.getDevices(topic, history, reason)
+        const httpRequestObservable = this.deviceApi.getDevices(topic, [], history, reason)
         this._pendingRequest = true
         return httpRequestObservable.subscribe(resp => {
                 const payload = resp.body.payload
@@ -140,7 +140,7 @@ export class DeviceListComponent {
     readTree (): Subscription {
         this._pendingRequest = true
         const topicFilter = this.topicFilter.split('|').join('/')
-        const httpRequestObservable = this.deviceApi.getDevices(topicFilter, false, false, 7)
+        const httpRequestObservable = this.deviceApi.getDevices(topicFilter, [], false, false, 7)
         return httpRequestObservable.subscribe(resp => {
             const payload = resp.body.payload
             this.deviceStorage.replaceManyNodes(payload)

@@ -70,13 +70,18 @@ export class DeviceDetailsComponent implements OnInit {
 
     /**
      * Read data from the server based on a topic
-     * @param history true, to add the history
-     * @param reason true, if reason information will be added
+     * @param addHistory true, to add the history
+     * @param addReason true, if reason information will be added
      * @returns The subscription element for the http call.
      */
-    updateStorageFromApi(history: boolean, reason: boolean) : Subscription {
+    updateStorageFromApi(addHistory: boolean, addReason: boolean) : Subscription {
         this._pendingRequest = true
-        return this.deviceApi.getDevices(this._deviceTopic, history, reason).
+        const nodes = []
+        if (this.device) {
+            const { _topic, value, reason } = this.device
+            nodes.push({ topic: _topic, value, reason })
+        }
+        return this.deviceApi.getDevices(this._deviceTopic, nodes, addHistory, addReason).
             subscribe(resp => {
                 const payload = resp.body.payload
                 this.deviceStorage.replaceManyNodes(payload)
@@ -94,7 +99,6 @@ export class DeviceDetailsComponent implements OnInit {
      */
     onClick (value): void {
         this.deviceApi.publish(this.deviceSubject.device.topic, value).subscribe(resp => {
-            console.log(resp)
         })
     }
 
@@ -105,7 +109,6 @@ export class DeviceDetailsComponent implements OnInit {
         const valueControl = this.detailForm.get('value')
         if (valueControl.touched) {
             this.deviceApi.publish(this.deviceSubject.device.topic, valueControl.value).subscribe(resp => {
-                console.log(resp)
             })
         }
     }
@@ -117,7 +120,6 @@ export class DeviceDetailsComponent implements OnInit {
     _pollDeviceDetailDataFromServer(updateTimeInMilliseconds: number): void {
         const pollForUpdate = timer(0, updateTimeInMilliseconds)
         this._subscriptionCollect.add(pollForUpdate.subscribe(() => {
-            console.log("detail update");
             if (!this._pendingRequest) {
                 this._subscriptionCollect.add(this.updateStorageFromApi(true, true))
             }

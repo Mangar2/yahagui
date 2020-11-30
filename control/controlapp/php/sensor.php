@@ -4,6 +4,7 @@ $topic ='';
 $history = 'false';
 $reason = 'true';
 $levelAmount = 1;
+$nodes = '';
 
 $postdata = file_get_contents("php://input");
 
@@ -31,6 +32,9 @@ if (!empty($postdata)) {
             ]);
             */
         }
+        if (property_exists($request, "nodes")) {
+            $nodes = json_encode($request->nodes);
+        }
     }
 }
 
@@ -46,7 +50,9 @@ $opts = [
         "header" => 
             "history: " . $history . "\r\n".
             "reason: " . $reason . "\r\n".
-            "levelAmount: " . $levelAmount . "\r\n"
+            "levelAmount: " . $levelAmount . "\r\n" .
+            "content-type: application/json; charset=UTF-8 \r\n",
+        "content" => $nodes
     ]
 ];
 

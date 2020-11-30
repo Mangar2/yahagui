@@ -252,11 +252,8 @@ export class DeviceTree {
      */
     public replaceManyNodes(payload: IPayload) {
         if (payload) {
-            for (let topic in payload) {
-                if (typeof(topic) === 'string' && topic !== '') {
-                    let info = payload[topic]
-                    this.replaceSingleNode(info);
-                }
+            for (let node of payload) {
+                this.replaceSingleNode(node);
             }
         }
     }
